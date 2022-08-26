@@ -36,9 +36,9 @@ class DBconnectorTest {
             ps = con.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, "Jens");
             ps.setString(2, "Jensen");
-            ps.setString(3, "Hemmelig123");
-            ps.setString(4, "40404040");
-            ps.setString(5, "Rolighedsvej 3");
+            ps.setString(3, "EndnuMereHemmelig123");
+            ps.setString(4, "50505050");
+            ps.setString(5, "Urolighedsvej 3");
             ps.executeUpdate();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ class DBconnectorTest {
     @Test
     void US1() throws SQLException {
         System.out.println("List of all user on the system by their names only");
-        //String expected = "1 Hans Hansen";
+        String expected = "1 Hans Hansen\n2 Jens Jensen\n";
         StringBuilder actual = new StringBuilder();
         ResultSet rs = con.prepareStatement("SELECT * FROM `startcode_test`.`usertable`").executeQuery();
         while (rs.next()) {
@@ -73,16 +73,33 @@ class DBconnectorTest {
             String lname = rs.getString("lname");
             actual.append(id).append(" ").append(fname).append(" ").append(lname).append("\n");
         }
-        //assertEquals(expected, actual.toString());
+        assertEquals(expected, actual.toString());
         System.out.println(actual.toString());
     }
 
-    // @org.junit.jupiter.api.Test
-    // void connection() throws SQLException, ClassNotFoundException {
-    //     System.out.println("Testing connection to db...");
-    //     boolean expected = true;
-    //     boolean actual = new DBconnector().connection().isValid(10);
-    //     assertEquals(expected, actual);
-    //     System.out.println(actual);
-    // }
+    @Test
+    void US2() throws SQLException {
+        System.out.println("Details of a specific user from the list");
+        String expected =
+                "ID: 1\n" +
+                "First Name: Hans\n" +
+                "Last Name: Hansen\n" +
+                "Password: Hemmelig123\n" +
+                "Phone: 40404040\n" +
+                "Address: Rolighedsvej 3\n";
+        StringBuilder actual = new StringBuilder();
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM `startcode_test`.`usertable` WHERE id = ?");
+        ps.setInt(1, 1);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            actual.append("ID: ").append(rs.getInt("id")).append("\n");
+            actual.append("First Name: ").append(rs.getString("fname")).append("\n");
+            actual.append("Last Name: ").append(rs.getString("lname")).append("\n");
+            actual.append("Password: ").append(rs.getString("pw")).append("\n");
+            actual.append("Phone: ").append(rs.getString("phone")).append("\n");
+            actual.append("Address: ").append(rs.getString("address")).append("\n");
+        }
+        assertEquals(expected, actual.toString());
+        System.out.println(actual.toString());
+    }
 }
