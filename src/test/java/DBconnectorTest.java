@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,4 +103,65 @@ class DBconnectorTest {
         assertEquals(expected, actual.toString());
         System.out.println(actual.toString());
     }
+
+    @Test
+    void US3() throws SQLException {
+        String expected =
+                "ID: 1\n" +
+                "First Name: Johan\n" +
+                "Last Name: Hansen\n" +
+                "Password: Hemmelig123\n" +
+                "Phone: 40404040\n" +
+                "Address: Rolighedsvej 3\n";
+        StringBuilder actual = new StringBuilder();
+        PreparedStatement ps = con.prepareStatement("UPDATE `startcode_test`.`usertable` SET fname = ? WHERE id = ?");
+        ps.setString(1, "Johan");
+        ps.setInt(2, 1);
+        ps.executeUpdate();
+
+        ps = con.prepareStatement("SELECT * FROM `startcode_test`.`usertable` WHERE id = ?");
+        ps.setInt(1, 1);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            actual.append("ID: ").append(rs.getInt("id")).append("\n");
+            actual.append("First Name: ").append(rs.getString("fname")).append("\n");
+            actual.append("Last Name: ").append(rs.getString("lname")).append("\n");
+            actual.append("Password: ").append(rs.getString("pw")).append("\n");
+            actual.append("Phone: ").append(rs.getString("phone")).append("\n");
+            actual.append("Address: ").append(rs.getString("address")).append("\n");
+        }
+        assertEquals(expected, actual.toString());
+        System.out.println(actual.toString());
+    }
+
+    //@Test
+    //void US3() throws SQLException {
+    //    System.out.println("Edit your own details");
+    //    Scanner sc = new Scanner(System.in);
+    //    System.out.println(
+    //            "What do you wish to change?\n" +
+    //            "1. First Name" +
+    //            "2. Last Name" +
+    //            "3. Password" +
+    //            "4. Phone" +
+    //            "5. Address");
+    //    int detail = sc.nextInt();
+    //    switch (detail) {
+    //        case 1:
+    //            String column = "fname";
+    //            String value = sc.nextLine();
+    //            break;
+    //        case 2:
+    //            break;
+    //        case 3:
+    //            break;
+    //        case 4:
+    //            break;
+    //        case 5:
+    //            break;
+    //    }
+    //    String SQL = "UPDATE startcode_test.usertable (?) VALUES (?)";
+    //    //assertEquals(expected, actual.toString());
+    //    System.out.println(actual.toString());
+    //}
 }
